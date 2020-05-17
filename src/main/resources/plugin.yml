@@ -1,0 +1,9 @@
+name: PathfindingGridDisplayer
+author: vagola
+version: 1.0.0
+main: net.eliza.plugin.PathfindingGridDisplayer
+description: Minecraft plugin to display pathfinding grid
+commands:
+  grid:
+    usage: /grid <file_name>
+    description: "Displays pathfinding grid"
