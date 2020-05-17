@@ -28,6 +28,10 @@ public class Grid {
         return height;
     }
 
+    public int getLength() {
+        return width * width * height;
+    }
+
     public static Grid importGrid(DataInput in) throws IOException {
         int width = in.readInt();
         int height = in.readInt();

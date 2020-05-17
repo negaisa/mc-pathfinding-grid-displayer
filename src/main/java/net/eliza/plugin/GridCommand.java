@@ -22,6 +22,9 @@ import java.util.logging.Logger;
 
 public class GridCommand implements CommandExecutor {
 
+    private static final int BLOCKS_TO_KICK_PLAYER = 50_000;
+    private static final int LOG_PROGRESS_BLOCKS = 250_000;
+
     private final Plugin plugin;
     private final Logger logger;
 
@@ -57,20 +60,29 @@ public class GridCommand implements CommandExecutor {
         try (DataInputStream in = new DataInputStream(Files.newInputStream(path))) {
             grid = Grid.importGrid(in);
         } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Failed to load data from file", e);
+            logger.log(Level.WARNING, "Failed to load data from file", e);
             sender.sendMessage(ChatColor.RED + "Failed to load data from file");
             return true;
         }
 
-        sender.sendMessage(ChatColor.YELLOW + "Starting heavy grid render task");
-        logger.log(Level.INFO, "Starting heavy grid render task");
+        sender.sendMessage(ChatColor.YELLOW + "Starting grid render task");
+        logger.info("Starting grid render task");
 
         Player player = (Player) sender;
         Location startAt = player.getLocation();
+        int length = grid.getLength();
 
-        for (int x = 0; x < grid.getWidth(); x += 1) {
-            for (int y = 0; y < grid.getWidth(); y += 1) {
-                for (int z = 0; z < grid.getHeight(); z += 1) {
+        if (length > BLOCKS_TO_KICK_PLAYER) {
+            player.kickPlayer(ChatColor.YELLOW +
+                    "Grid render task will change " + length + " blocks. \n" +
+                    "To avoid client performance issues please wait until task will be finished");
+        }
+
+        int blocks = 0;
+
+        for (int x = 0; x < grid.getWidth(); x++) {
+            for (int y = 0; y < grid.getWidth(); y++) {
+                for (int z = 0; z < grid.getHeight(); z++) {
                     // Minecraft height is Y-axis.
                     Location location = startAt.clone().add(x, z, y);
 
@@ -79,12 +91,20 @@ public class GridCommand implements CommandExecutor {
                     } else {
                         setBlock(location, Material.AIR);
                     }
+
+                    blocks++;
+
+                    if (blocks > 0 && blocks % LOG_PROGRESS_BLOCKS == 0) {
+                        float percent = (blocks * 100.0f) / length;
+
+                        logger.info("Grid render are ready for " + percent + "%");
+                    }
                 }
             }
         }
 
-        sender.sendMessage(ChatColor.GREEN + "Grid are rendered");
-        logger.log(Level.INFO, "Grid are rendered");
+        sender.sendMessage(ChatColor.GREEN + "Grid finished to render. To view re-join server");
+        logger.info("Grid finished to render");
         return true;
     }
 
