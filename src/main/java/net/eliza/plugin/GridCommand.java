@@ -82,7 +82,7 @@ public class GridCommand implements CommandExecutor {
 
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getWidth(); y++) {
-                for (int z = 0; z < grid.getHeight(); z++) {
+                for (int z = 0; z < Math.min(grid.getHeight(), 256); z++) {
                     // Minecraft height is Y-axis.
                     Location location = startAt.clone().add(x, z, y);
 
