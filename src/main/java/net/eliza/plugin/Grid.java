@@ -17,7 +17,7 @@ public class Grid {
     }
 
     public boolean isObstacle(int x, int y, int z) {
-       return data.get(x + width * (y + height * z));
+       return data.get(x + width * (y + width * z));
     }
 
     public int getWidth() {
