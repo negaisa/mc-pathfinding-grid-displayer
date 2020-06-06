@@ -37,7 +37,7 @@ public class Grid {
         int height = in.readInt();
 
         int length = width * width * height;
-        int lengthWithPadding = (int) Math.ceil(length / 8.0);
+        int lengthWithPadding = (int) Math.ceil((float) length / 8.0);
 
         byte[] bytes = new byte[lengthWithPadding];
         in.readFully(bytes);
